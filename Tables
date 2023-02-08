@@ -17,6 +17,56 @@ values ('Haruki','Maruki','haruk@ali.comi','1946-6-2'),
 ('Resat','Nuri','haruk@ali.comi','1946-6-2');
 select * FROM author
 
-CREate table author2 As
-SELECT *from author
-SELECT *FROM author2
+-- author tablosundan author2 tablosuna veri kopyalama
+CREATE table author2 AS
+SELECT *FROM author
+WHERE first_name = 'Sabahattin';
+
+
+--author3 tablosu olusturup veri kopyalayalım
+CREATE TABLE author3 AS
+SELECT * FROM author;
+--ne var bakalım
+SELECT * FROM author3;
+--3. tablo olusturuldu ve 1. tablo kopyalandı.
+
+--Tablo silme
+DROP TABLE author;
+--hata mesajı almamak icin 
+DROP TABLE IF EXIST author;
+
+--19 VERİLERİ GÜNCELLEMEK - SİLMEK
+GENERATE DUMMY SERVİCE ARA GOOGLE---> MOCKAROO -- otomatik veri getirir.
+
+--- veri güncelleme
+UPDATE <table_name>
+SET column1 = value1,
+    column2 = value2,
+    ......
+    WHERE condition;
+
+--örnek  
+UPDATE author
+SET first_name = 'caglar'
+    last_name = 'aral',
+    email = 'caglar@hotmail.com'
+    birthday = '1994-04-10'
+WHERE id = 10;  --id'si 10 olan satırdaki veriler değişti.
+
+--v ile başlayanları değiştiriyor, sadece firstname ve lastname değişcek
+UPDATE author
+SET first_name = 'xxxx'
+    last_name = 'yyyy',
+WHERE first_name LIKE 'V%';
+
+
+--örnek firstname odetta olanın lastname'i update olarak güncellendi
+UPDATE author
+SET last_name = 'UPDATE'
+WHERE first_name ='Odetta'
+RETURNING *;
+
+--SİLME, İD'Sİ 6 OLAN ELEMAN SİLİNDİ, DİĞER VERİLERDE İD DEĞİŞİKLİĞİ OLMAZ
+DELETE author
+WHERE id = 6; VEYA WHERE id > 11
+RETURNİNG *; -- VERİLERİ GERİ DÖNECEK
