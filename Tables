@@ -233,3 +233,79 @@ INNER JOIN author ON book.author_id = author.id;
 --ör aşg gibi de yazabiliriz 2 tablo birleşir
 SELECT book.title, author.first_name, author.last_name FROM book
 INNER JOIN author ON book.author_id = author.id; 
+
+
+35.SUBQUERY AND JOIN
+Altsorgular ve JOIN kavramları birlikte çok sık kullanılırlar. 
+Aşağıdaki iki senaryoda bu iki yapıyı birlikte kullanacağız.
+
+İlk senaryomuz: bookstore veri tabanında kitap sayfası ortalama kitap sayfası sayısından 
+fazla olan kitapların isimlerini, bu kitapların yazarlarına ait isim ve soyisim bilgileriyle 
+birlikte sıralayınız.
+
+SELECT author.first_name, author.last_name, book.title
+FROM author
+INNER JOIN book ON book.author_id = author.id
+WHERE page_number >
+(
+  SELECT AVG(page_number) FROM book
+);
+
+Yukarıdaki sorgumuzda kitaplara ait yazar bilgilerini JOIN kullanarak elde ediyoruz. 
+Ortalama sayfa sayısını da alt sorgudan getiriyoruz.
+
+İkinci senaryomuz: dvdrental veritabanında en uzun filmlerin isimlerini aktör isim 
+ve soyisimleriyle birlikte sıralayalım.
+iki tablo arasındaki ilişkiyi nasıl kuracagız.
+
+SELECT actor.first_name, actor.last_name, film.title
+FROM actor
+JOIN film_actor ON film_actor.actor_id = actor.actor_id
+JOIN film ON film.film_id = film_actor.film_id
+WHERE film.length =
+(
+  SELECT MAX(length)  FROM film
+)
+ 
+Burada da görmüş olduğumuz gibi film lerin aktör bilgilerini ikili JOIN yapısı kullanarak elde ediyoruz. 
+En uzun film süresini de alt sorgudan getiriyoruz.
+
+36.RECAP 
+
+--film tablosunda isminde en az 4 adet 'e' veya 'E' karakteri bulunan kç tane film vardır? 
+SELECT COUNT(*) 
+FROM film
+WHERE ILIKE '%e%e%e%e%' --ILIKE BYÜK KÜCÜK HARF DUYARLILIGI YOK
+
+--category tablosundan kategori isimlerini ve kategori başına düşen film sayılarını sıralayınız.
+FİLM KATEGOTY tablosu ile ilişki saglanır
+
+SELECT COUNT(*), category.name
+FROM category 
+JOIN film_category ON film_category.category_id = category.category_id
+JOIN film ON film.film_id = film_categoty.film_id
+GROUP BY category.name;
+
+film tablosunda içerisinden en fazla sayıda film bulunduran rating kategorisi hangisidir?
+SELECT COUNT (*), rating
+FROM film;
+GROUP BY rating;
+ORDER BY COUNT(*) DESC --SIRALADI 
+LIMT 1; --1 TANESİNİ GÖSTERDİ
+
+film tablosundan 'K' karakteri ile başlayan en uzun ve replacenet_cost u en düşük 4 filmi sıralayınız.
+SELECT title, length, leplacement_cost
+FROM film 
+WHERE title LIKE 'K%' --BÜYÜK HARF HASSASİYETİ VAR
+ORDER BY length DESC, replacement_cost ASC
+LIMIT 4;
+
+customer tablosunda en çok alışveriş yapan müşterinin adı nedir?
+--amountu toplayrak her idnin yaptıgı harcamayı bulacagız
+
+SELECT SUM(amount), customer.first_name, customer.last_name
+FROM payment
+JOIN  customer ON customer_id = payment.customer.id
+GROUP BY payment.customer_id, customer.first_name, customer.last_name;   --SORGUYU CUSTOMER'E GÖRE YAPTIGIMIZ İÇİN GRUPLUYORUZ.
+ORDER BY SUM(amount) DESC
+LIMIT 1;
